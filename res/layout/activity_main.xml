@@ -1,281 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".ui.MainActivity">
+    android:orientation="vertical"
+    android:background="@color/background">
 
-    <!-- ─────────────────────────────── -->
-    <!-- 🔝 TOP APP BAR                  -->
-    <!-- ─────────────────────────────── -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <!-- TOP BAR -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:background="@color/primary_dark"
-        app:elevation="8dp">
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🏈 Melvin Predictor"
+                android:textColor="@color/accent"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvLastUpdated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last updated: --:--:--"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"/>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnChangeKey"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔑 Key"
+            android:textColor="@color/accent"
+            android:textSize="11sp"/>
+    </LinearLayout>
+
+    <!-- 🌍 LEAGUE SELECTOR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@color/surface">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌍 League: "
+            android:textColor="@color/accent"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/spinnerLeague"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primary_light"
+            android:popupBackground="@color/surface"/>
+    </LinearLayout>
+
+    <!-- QUOTA CARD -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:strokeColor="@color/primary_light"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="8dp">
+            android:padding="16dp">
 
-            <!-- App Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textColor="@color/accent"
-                android:textSize="22sp"
+                android:text="📡 API Quota Monitor"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <!-- Last Updated -->
-            <TextView
-                android:id="@+id/tvLastUpdated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/last_updated"
-                android:textColor="@color/text_secondary"
-                android:textSize="11sp"
-                android:layout_marginTop="2dp"/>
-
-        </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- ─────────────────────────────── -->
-    <!-- 📋 MAIN CONTENT                 -->
-    <!-- ─────────────────────────────── -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <!-- ─────────────────────────── -->
-        <!-- 📡 QUOTA MONITOR CARD       -->
-        <!-- ─────────────────────────── -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/quotaCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp"
-            app:strokeColor="@color/primary_light"
-            app:strokeWidth="1dp">
+            <ProgressBar
+                android:id="@+id/quotaProgressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/quota_good"
+                android:progressBackgroundTint="@color/divider"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal">
 
-                <!-- Title Row -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/quota_title"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
-
-                <!-- Progress Bar -->
-                <ProgressBar
-                    android:id="@+id/quotaProgressBar"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="12dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="8dp"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressTint="@color/quota_good"
-                    android:progressBackgroundTint="@color/divider"/>
-
-                <!-- Stats Row -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <!-- Remaining -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/tvRequestsRemaining"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/tvRequestsRemaining"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="--"
-                            android:textColor="@color/quota_good"
-                            android:textSize="26sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/quota_remaining"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
-
-                    <!-- Divider -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="40dp"
-                        android:background="@color/divider"/>
-
-                    <!-- Used -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                        android:text="--"
+                        android:textColor="@color/quota_good"
+                        android:textSize="26sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/tvRequestsUsed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="--"
-                            android:textColor="@color/text_primary"
-                            android:textSize="26sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/quota_used"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
-
-                    <!-- Divider -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="40dp"
-                        android:background="@color/divider"/>
-
-                    <!-- Last Cost -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/tvLastCost"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="--"
-                            android:textColor="@color/accent"
-                            android:textSize="26sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/quota_cost"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
+                        android:text="Remaining"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"/>
                 </LinearLayout>
 
-                <!-- Status Message -->
-                <TextView
-                    android:id="@+id/tvQuotaStatus"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="@string/quota_resets"
-                    android:textColor="@color/quota_good"
-                    android:textSize="12sp"
-                    android:textStyle="italic"/>
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/tvRequestsUsed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/text_primary"
+                        android:textSize="26sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Used"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"/>
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/tvLastCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/accent"
+                        android:textSize="26sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last Cost"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"/>
+                </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- ─────────────────────────── -->
-        <!-- 🔄 REFRESH BUTTON           -->
-        <!-- ─────────────────────────── -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRefresh"
-            style="@style/RefreshButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/btn_refresh"
-            android:textSize="15sp"/>
-
-        <!-- ─────────────────────────── -->
-        <!-- ⏳ LOADING INDICATOR        -->
-        <!-- ─────────────────────────── -->
-        <LinearLayout
-            android:id="@+id/loadingLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="16dp"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:indeterminateTint="@color/accent"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tvQuotaStatus"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="@string/loading"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp"/>
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="⚡ Resets Monthly"
+                android:textColor="@color/quota_good"
+                android:textSize="12sp"
+                android:textStyle="italic"/>
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-        <!-- ─────────────────────────── -->
-        <!-- 📋 MATCHES RECYCLERVIEW     -->
-        <!-- ─────────────────────────── -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMatches"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="16dp"/>
+    <!-- REFRESH BUTTON -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRefresh"
+        style="@style/RefreshButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="🔄 Refresh Matches"/>
 
-        <!-- ─────────────────────────── -->
-        <!-- 📭 EMPTY STATE              -->
-        <!-- ─────────────────────────── -->
+    <!-- LOADING -->
+    <LinearLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:indeterminateTint="@color/accent"/>
         <TextView
-            android:id="@+id/tvEmptyState"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="32dp"
-            android:text="@string/no_matches"
-            android:textColor="@color/text_secondary"
-            android:textSize="16sp"
-            android:visibility="gone"/>
-
+            android:layout_marginStart="12dp"
+            android:text="Loading predictions..."
+            android:textColor="@color/text_secondary"/>
     </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- EMPTY STATE -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="32dp"
+        android:text="No matches available!"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"/>
+
+    <!-- MATCHES LIST -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMatches"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="16dp"/>
+
+</LinearLayout>
