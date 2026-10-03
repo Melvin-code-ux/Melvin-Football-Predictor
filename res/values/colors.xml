@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 🎨 App Brand Colors -->
     <color name="primary">#1B5E20</color>
     <color name="primary_dark">#003300</color>
     <color name="primary_light">#4CAF50</color>
@@ -8,22 +7,16 @@
     <color name="background">#121212</color>
     <color name="surface">#1E1E1E</color>
     <color name="card_background">#242424</color>
-
-    <!-- 📝 Text Colors -->
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B0B0B0</color>
-    <color name="text_accent">#FFD700</color>
-
-    <!-- 🟢🟡🔴 Quota Status Colors -->
     <color name="quota_good">#4CAF50</color>
     <color name="quota_warning">#FF9800</color>
     <color name="quota_critical">#F44336</color>
     <color name="quota_exhausted">#B71C1C</color>
-
-    <!-- 🏈 Match Card Colors -->
-    <color name="home_team_bg">#1A237E</color>
-    <color name="away_team_bg">#4A148C</color>
-    <color name="draw_bg">#37474F</color>
-    <color name="prediction_bg">#1B5E20</color>
     <color name="divider">#333333</color>
+
+    <!-- ✅ NEW COLORS FOR MARKETS! -->
+    <color name="home_win_bg">#0D1B2A</color>
+    <color name="draw_bg">#1A1A1A</color>
+    <color name="away_win_bg">#1A0D2A</color>
 </resources>
