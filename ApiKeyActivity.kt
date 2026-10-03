@@ -2,7 +2,6 @@ package com.melvin.predictor.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.melvin.predictor.api.ApiClient
@@ -25,37 +24,34 @@ class ApiKeyActivity : AppCompatActivity() {
         quotaPrefs = QuotaPreferences(this)
         setContentView(binding.root)
 
-        // 📖 Load existing key if saved
+        // Load existing key
         val existingKey = quotaPrefs.getApiKey()
         if (existingKey.isNotEmpty()) {
             binding.etApiKey.setText(existingKey)
         }
 
-        // ✅ Save button
         binding.btnSaveKey.setOnClickListener {
-            // 🧹 Trim ALL spaces & newlines from key!
+            // 🧹 Clean the key thoroughly!
             val key = binding.etApiKey.text
                 .toString()
-                .trim()                    // ← removes spaces
-                .replace("\n", "")         // ← removes newlines
-                .replace("\r", "")         // ← removes returns
-                .replace(" ", "")          // ← removes any spaces
+                .trim()
+                .replace("\n", "")
+                .replace("\r", "")
+                .replace(" ", "")
 
             when {
                 key.isEmpty() -> {
-                    binding.tilApiKey.error = "❌ Please enter your API key!"
+                    binding.tilApiKey.error = "❌ Enter your API key!"
                 }
-                key.length < 10 -> {
-                    binding.tilApiKey.error = "❌ Key too short! Check your key!"
+                key.length < 5 -> {
+                    binding.tilApiKey.error = "❌ Key too short!"
                 }
                 else -> {
-                    // ✅ Test key before saving!
-                    testAndSaveKey(key)
+                    testAndSave(key)
                 }
             }
         }
 
-        // 🗑️ Clear button
         binding.btnClearKey.setOnClickListener {
             binding.etApiKey.setText("")
             quotaPrefs.clearApiKey()
@@ -63,7 +59,6 @@ class ApiKeyActivity : AppCompatActivity() {
             binding.tilApiKey.helperText = null
         }
 
-        // 🔗 Get key link
         binding.tvGetApiKey.setOnClickListener {
             startActivity(
                 Intent(
@@ -74,95 +69,82 @@ class ApiKeyActivity : AppCompatActivity() {
         }
     }
 
-    // 🧪 Test key with real API call before saving!
-    private fun testAndSaveKey(apiKey: String) {
-        // Show loading state
-        binding.btnSaveKey.isEnabled = false
-        binding.btnSaveKey.text      = "⏳ Testing key..."
-        binding.tilApiKey.error      = null
-        binding.tilApiKey.helperText = "Testing your API key..."
+    private fun testAndSave(apiKey: String) {
+        binding.btnSaveKey.isEnabled  = false
+        binding.btnSaveKey.text       = "⏳ Testing..."
+        binding.tilApiKey.error       = null
+        binding.tilApiKey.helperText  = "🔄 Checking key..."
 
         lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                testApiKey(apiKey)
+            val responseCode = withContext(Dispatchers.IO) {
+                checkKey(apiKey)
             }
 
-            // Reset button
             binding.btnSaveKey.isEnabled = true
             binding.btnSaveKey.text      = "✅ Save Key and Start"
 
-            when (result) {
-                // ✅ Key works!
-                ApiTestResult.SUCCESS -> {
+            // 🔍 Show exact response for debugging!
+            when (responseCode) {
+                200 -> {
+                    binding.tilApiKey.helperText = "✅ Key valid! Loading..."
                     binding.tilApiKey.error      = null
-                    binding.tilApiKey.helperText = "✅ Key verified!"
                     saveAndProceed(apiKey)
                 }
-                // ❌ Invalid key
-                ApiTestResult.INVALID_KEY -> {
-                    binding.tilApiKey.helperText = null
-                    binding.tilApiKey.error      =
-                        "❌ Invalid key! Get your key at the-odds-api.com"
+                401 -> {
+                    binding.tilApiKey.error =
+                        "❌ Error 401 - Key Invalid! Check dashboard!"
                 }
-                // 📡 No internet
-                ApiTestResult.NO_INTERNET -> {
-                    binding.tilApiKey.helperText = null
-                    binding.tilApiKey.error      =
-                        "📡 No internet! Connect and try again!"
+                403 -> {
+                    binding.tilApiKey.error =
+                        "❌ Error 403 - Access denied!"
                 }
-                // ⚠️ Unknown error
-                ApiTestResult.UNKNOWN_ERROR -> {
-                    // Save anyway if unknown error
-                    // might be API issue not key issue
-                    binding.tilApiKey.error      = null
-                    binding.tilApiKey.helperText = "⚠️ Saved! Could not verify."
+                429 -> {
+                    // ✅ 429 means key works but too many requests!
+                    // Save and proceed anyway!
+                    binding.tilApiKey.helperText = "⚠️ Rate limited but key valid!"
+                    saveAndProceed(apiKey)
+                }
+                0 -> {
+                    // ⚠️ Network error - save anyway!
+                    binding.tilApiKey.helperText = "⚠️ No internet - saved anyway!"
+                    saveAndProceed(apiKey)
+                }
+                else -> {
+                    // ⚠️ Unknown - save anyway and try!
+                    binding.tilApiKey.helperText =
+                        "⚠️ Code $responseCode - Saving anyway!"
                     saveAndProceed(apiKey)
                 }
             }
         }
     }
 
-    // 🌐 Direct API test
-    private fun testApiKey(apiKey: String): ApiTestResult {
+    private fun checkKey(apiKey: String): Int {
         return try {
             val url = URL(
-                "https://api.the-odds-api.com/v4/sports" +
-                "?apiKey=$apiKey"
+                "https://api.the-odds-api.com/v4/sports/soccer_epl/odds" +
+                "?apiKey=$apiKey" +
+                "&regions=uk" +
+                "&markets=h2h"
             )
-            val connection = url.openConnection() as HttpsURLConnection
-            connection.connectTimeout = 10000
-            connection.readTimeout    = 10000
-            connection.requestMethod  = "GET"
-
-            val responseCode = connection.responseCode
-            connection.disconnect()
-
-            when (responseCode) {
-                200  -> ApiTestResult.SUCCESS
-                401  -> ApiTestResult.INVALID_KEY
-                403  -> ApiTestResult.INVALID_KEY
-                else -> ApiTestResult.UNKNOWN_ERROR
-            }
+            val conn = url.openConnection() as HttpsURLConnection
+            conn.connectTimeout = 15000
+            conn.readTimeout    = 15000
+            conn.requestMethod  = "GET"
+            val code = conn.responseCode
+            conn.disconnect()
+            code
         } catch (e: java.net.UnknownHostException) {
-            ApiTestResult.NO_INTERNET
+            0  // No internet
         } catch (e: Exception) {
-            ApiTestResult.UNKNOWN_ERROR
+            -1 // Unknown error
         }
     }
 
-    // 💾 Save key and go to main screen
     private fun saveAndProceed(apiKey: String) {
         quotaPrefs.saveApiKey(apiKey)
         ApiClient.setApiKey(apiKey)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
-}
-
-// 📊 Test result states
-enum class ApiTestResult {
-    SUCCESS,
-    INVALID_KEY,
-    NO_INTERNET,
-    UNKNOWN_ERROR
 }
