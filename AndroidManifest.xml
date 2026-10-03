@@ -6,16 +6,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="Melvin Predictor"
         android:supportsRtl="true"
         android:theme="@style/Theme.MelvinPredictor"
         android:usesCleartextTraffic="false">
 
-        <!-- 🔑 API Key Setup Screen → LAUNCHER! -->
+        <!-- ✅ MainActivity is now the LAUNCHER! -->
         <activity
-            android:name=".ui.ApiKeyActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -24,9 +22,9 @@
             </intent-filter>
         </activity>
 
-        <!-- 🏠 Main Screen -->
+        <!-- ApiKeyActivity kept but not launcher -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.ApiKeyActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
