@@ -4,10 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="12dp"
     app:cardBackgroundColor="@color/card_background"
     app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
     app:strokeColor="@color/divider"
     app:strokeWidth="1dp">
 
@@ -17,7 +16,7 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <!-- 🏆 League / Sport Title -->
+        <!-- 🏆 League -->
         <TextView
             android:id="@+id/tvSportTitle"
             android:layout_width="wrap_content"
@@ -31,7 +30,7 @@
             android:textSize="10sp"
             android:textStyle="bold"/>
 
-        <!-- ⚽ TEAMS ROW -->
+        <!-- ⚽ Teams -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +38,6 @@
             android:gravity="center_vertical"
             android:layout_marginTop="10dp">
 
-            <!-- 🏠 Home Team -->
             <TextView
                 android:id="@+id/tvHomeTeam"
                 android:layout_width="0dp"
@@ -51,18 +49,16 @@
                 android:textStyle="bold"
                 android:maxLines="2"/>
 
-            <!-- VS Badge -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/vs"
+                android:text="VS"
                 android:textColor="@color/accent"
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <!-- ✈️ Away Team -->
             <TextView
                 android:id="@+id/tvAwayTeam"
                 android:layout_width="0dp"
@@ -75,17 +71,16 @@
                 android:maxLines="2"/>
         </LinearLayout>
 
-        <!-- 📅 Match Time -->
+        <!-- 📅 Time -->
         <TextView
             android:id="@+id/tvMatchTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:textColor="@color/text_secondary"
             android:textSize="11sp"/>
 
-        <!-- ─────── DIVIDER ─────── -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -93,83 +88,234 @@
             android:layout_marginBottom="10dp"
             android:background="@color/divider"/>
 
-        <!-- 📊 PROBABILITY BARS -->
+        <!-- 📊 1X2 PROBABILITIES -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📊 Match Winner (1X2)"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="horizontal">
 
-            <!-- Home % -->
-            <TextView
-                android:id="@+id/tvHomeProb"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:textColor="@color/quota_good"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:background="@color/home_win_bg"
+                android:padding="8dp"
+                android:layout_marginEnd="4dp">
+                <TextView
+                    android:id="@+id/tvHomeProb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/quota_good"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvHomeOdds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="11sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"/>
+            </LinearLayout>
 
-            <!-- Draw % -->
-            <TextView
-                android:id="@+id/tvDrawProb"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:textColor="@color/text_secondary"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:background="@color/draw_bg"
+                android:padding="8dp"
+                android:layout_marginEnd="4dp">
+                <TextView
+                    android:id="@+id/tvDrawProb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvDrawOdds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="11sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Draw"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"/>
+            </LinearLayout>
 
-            <!-- Away % -->
-            <TextView
-                android:id="@+id/tvAwayProb"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:textColor="@color/quota_warning"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:background="@color/away_win_bg"
+                android:padding="8dp">
+                <TextView
+                    android:id="@+id/tvAwayProb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/quota_warning"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvAwayOdds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="11sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Away"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Labels Row -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/divider"/>
+
+        <!-- ⚽ OVER/UNDER -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚽ Over / Under"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvOverUnder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="@color/surface"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/divider"/>
+
+        <!-- 🎯 BTTS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎯 Both Teams To Score"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="2dp">
+            android:orientation="horizontal">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="@string/home_win"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"/>
+                android:background="@color/surface"
+                android:padding="8dp"
+                android:layout_marginEnd="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes ✅"
+                    android:textColor="@color/quota_good"
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvBttsYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="@string/draw"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/away_win"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"/>
+                android:background="@color/surface"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No ❌"
+                    android:textColor="@color/quota_critical"
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvBttsNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- ─────── DIVIDER ─────── -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/divider"/>
+
+        <!-- 🏆 TOP 5 BEST BETS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏆 Top 5 Best Bets"
+            android:textColor="@color/accent"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+        <LinearLayout
+            android:id="@+id/topBetsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -177,7 +323,7 @@
             android:layout_marginBottom="8dp"
             android:background="@color/divider"/>
 
-        <!-- 🔮 PREDICTION BADGE -->
+        <!-- 🔮 PREDICTION -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -187,7 +333,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/prediction_label"
+                android:text="🔮 Best Bet:"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginEnd="6dp"/>
@@ -214,6 +360,5 @@
                 android:textSize="11sp"
                 android:textStyle="italic"/>
         </LinearLayout>
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
