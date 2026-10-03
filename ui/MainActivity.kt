@@ -1,6 +1,5 @@
 package com.melvin.predictor.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -11,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.melvin.predictor.R
-import com.melvin.predictor.api.ApiClient
 import com.melvin.predictor.databinding.ActivityMainBinding
 import com.melvin.predictor.model.ApiQuota
 import com.melvin.predictor.model.QuotaStatus
@@ -32,14 +30,8 @@ class MainActivity : AppCompatActivity() {
         quotaPrefs = QuotaPreferences(this)
         setContentView(binding.root)
 
-        if (!quotaPrefs.hasApiKey()) {
-            startActivity(Intent(this, ApiKeyActivity::class.java))
-            finish()
-            return
-        }
-
-        ApiClient.setApiKey(quotaPrefs.getApiKey())
-
+        // ✅ No key check needed!
+        // Key is hardcoded in ApiClient!
         setupRecyclerView()
         setupButtons()
         setupLeagueSpinner()
@@ -59,12 +51,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnRefresh.setOnClickListener {
             viewModel.onRefreshClicked()
         }
-        binding.btnChangeKey.setOnClickListener {
-            startActivity(Intent(this, ApiKeyActivity::class.java))
-        }
     }
 
-    // 🌍 Setup League Spinner
     private fun setupLeagueSpinner() {
         viewModel.leagueNames.observe(this) { names ->
             val adapter = ArrayAdapter(
@@ -72,7 +60,9 @@ class MainActivity : AppCompatActivity() {
                 android.R.layout.simple_spinner_item,
                 names
             ).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                setDropDownViewResource(
+                    android.R.layout.simple_spinner_dropdown_item
+                )
             }
 
             binding.spinnerLeague.adapter = adapter
@@ -90,7 +80,9 @@ class MainActivity : AppCompatActivity() {
                         }
                         isSpinnerReady = true
                     }
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onNothingSelected(
+                        parent: AdapterView<*>?
+                    ) {}
                 }
         }
     }
@@ -112,7 +104,8 @@ class MainActivity : AppCompatActivity() {
             binding.loadingLayout.visibility =
                 if (isLoading) View.VISIBLE else View.GONE
             binding.btnRefresh.text =
-                if (isLoading) "⏳ Loading..." else "🔄 Refresh Matches"
+                if (isLoading) "⏳ Loading..."
+                else "🔄 Refresh Matches"
         }
 
         viewModel.errorMessage.observe(this) { message ->
@@ -147,6 +140,7 @@ class MainActivity : AppCompatActivity() {
             QuotaStatus.CRITICAL  -> R.color.quota_critical
             QuotaStatus.EXHAUSTED -> R.color.quota_exhausted
         }
+
         val color = ContextCompat.getColor(this, colorRes)
         binding.tvRequestsRemaining.setTextColor(color)
         binding.quotaProgressBar.progressTintList =
