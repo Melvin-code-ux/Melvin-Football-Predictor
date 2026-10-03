@@ -1,0 +1,124 @@
+package com.melvin.predictor.ui
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.melvin.predictor.R
+import com.melvin.predictor.api.ApiClient
+import com.melvin.predictor.databinding.ActivityMainBinding
+import com.melvin.predictor.model.ApiQuota
+import com.melvin.predictor.model.QuotaStatus
+import com.melvin.predictor.utils.QuotaPreferences
+import com.melvin.predictor.viewmodel.MainViewModel
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var quotaPrefs: QuotaPreferences
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var matchAdapter: MatchAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding     = ActivityMainBinding.inflate(layoutInflater)
+        quotaPrefs  = QuotaPreferences(this)
+        setContentView(binding.root)
+
+        // 🔑 Check key first!
+        if (!quotaPrefs.hasApiKey()) {
+            startActivity(Intent(this, ApiKeyActivity::class.java))
+            finish()
+            return
+        }
+
+        // ✅ Set key in ApiClient
+        ApiClient.setApiKey(quotaPrefs.getApiKey())
+
+        setupRecyclerView()
+        setupButtons()
+        observeViewModel()
+    }
+
+    private fun setupRecyclerView() {
+        matchAdapter = MatchAdapter()
+        binding.rvMatches.apply {
+            adapter       = matchAdapter
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            setHasFixedSize(false)
+        }
+    }
+
+    private fun setupButtons() {
+        binding.btnRefresh.setOnClickListener {
+            viewModel.onRefreshClicked()
+        }
+        binding.btnChangeKey.setOnClickListener {
+            startActivity(Intent(this, ApiKeyActivity::class.java))
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.matches.observe(this) { matches ->
+            matchAdapter.submitList(matches)
+            binding.tvEmptyState.visibility =
+                if (matches.isEmpty()) View.VISIBLE else View.GONE
+            binding.rvMatches.visibility =
+                if (matches.isEmpty()) View.GONE else View.VISIBLE
+        }
+
+        viewModel.quota.observe(this) { quota ->
+            updateQuotaUI(quota)
+        }
+
+        viewModel.isLoading.observe(this) { isLoading ->
+            binding.loadingLayout.visibility =
+                if (isLoading) View.VISIBLE else View.GONE
+            binding.btnRefresh.text =
+                if (isLoading) "⏳ Loading..." else "🔄 Refresh Matches"
+        }
+
+        viewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(
+                        ContextCompat.getColor(this, R.color.quota_critical)
+                    ).show()
+                viewModel.clearError()
+            }
+        }
+
+        viewModel.isRefreshEnabled.observe(this) { enabled ->
+            binding.btnRefresh.isEnabled = enabled
+            binding.btnRefresh.alpha     = if (enabled) 1.0f else 0.5f
+        }
+
+        viewModel.lastRefreshed.observe(this) { time ->
+            binding.tvLastUpdated.text = time
+        }
+    }
+
+    private fun updateQuotaUI(quota: ApiQuota) {
+        binding.tvRequestsRemaining.text = quota.requestsRemaining.toString()
+        binding.tvRequestsUsed.text      = quota.requestsUsed.toString()
+        binding.tvLastCost.text          = quota.lastRequestCost.toString()
+        binding.quotaProgressBar.progress = quota.usagePercent
+
+        val colorRes = when (quota.statusLevel) {
+            QuotaStatus.GOOD      -> R.color.quota_good
+            QuotaStatus.WARNING   -> R.color.quota_warning
+            QuotaStatus.CRITICAL  -> R.color.quota_critical
+            QuotaStatus.EXHAUSTED -> R.color.quota_exhausted
+        }
+        val color = ContextCompat.getColor(this, colorRes)
+        binding.tvRequestsRemaining.setTextColor(color)
+        binding.quotaProgressBar.progressTintList =
+            android.content.res.ColorStateList.valueOf(color)
+        binding.tvQuotaStatus.text = quota.statusMessage
+        binding.tvQuotaStatus.setTextColor(color)
+    }
+}
