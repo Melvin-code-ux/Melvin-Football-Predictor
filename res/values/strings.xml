@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">🏈 Melvin Predictor</string>
+
+    <!-- Quota Widget -->
+    <string name="quota_title">📡 API Quota Monitor</string>
+    <string name="quota_remaining">Requests Left</string>
+    <string name="quota_used">Used</string>
+    <string name="quota_cost">Last Cost</string>
+    <string name="quota_resets">⚡ Resets Monthly</string>
+    <string name="quota_exhausted_msg">⛔ Quota Exhausted! Resets next month.</string>
+
+    <!-- Buttons -->
+    <string name="btn_refresh">🔄 Refresh Matches</string>
+    <string name="btn_refreshing">⏳ Loading...</string>
+
+    <!-- Match Card -->
+    <string name="vs">VS</string>
+    <string name="prediction_label">🔮 Prediction</string>
+    <string name="home_win">Home Win</string>
+    <string name="away_win">Away Win</string>
+    <string name="draw">Draw</string>
+    <string name="probability">Probability</string>
+
+    <!-- States -->
+    <string name="no_matches">No matches available right now!</string>
+    <string name="loading">Loading predictions…</string>
+    <string name="last_updated">Last updated: --:--:--</string>
+    <string name="no_cache">No quota data yet</string>
+</resources>
