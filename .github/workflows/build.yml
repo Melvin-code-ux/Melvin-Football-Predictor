@@ -12,16 +12,9 @@ jobs:
     timeout-minutes: 10
 
     steps:
-
-      # ─────────────────────────────────
-      # 📥 STEP 1 - Checkout Code
-      # ─────────────────────────────────
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      # ─────────────────────────────────
-      # ☕ STEP 2 - Setup JDK 17
-      # ─────────────────────────────────
       - name: ☕ Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -29,9 +22,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # ─────────────────────────────────
-      # 💾 STEP 3 - Cache Gradle
-      # ─────────────────────────────────
       - name: 💾 Cache Gradle Dependencies
         uses: actions/cache@v4
         with:
@@ -43,45 +33,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # ─────────────────────────────────
-      # 🪄 STEP 4 - Generate Gradle Wrapper
-      # ─────────────────────────────────
       - name: 🪄 Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 8.0 --distribution-type bin
+        run: gradle wrapper --gradle-version 8.1.1 --distribution-type bin
 
-      # ─────────────────────────────────
-      # 🔧 STEP 5 - Make Gradlew Executable
-      # ─────────────────────────────────
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      # ─────────────────────────────────
-      # 🏗️ STEP 6 - Build Debug APK
-      # Uses pre-installed Android SDK
-      # on ubuntu-latest ✅ No setup needed!
-      # ─────────────────────────────────
       - name: 🏗️ Build Debug APK
-        run: ./gradlew assembleDebug
-          --no-daemon
-          --parallel
-          --build-cache
-          --quiet
+        run: ./gradlew assembleDebug --no-daemon --parallel --build-cache --quiet
         env:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
-          ANDROID_HOME: /usr/local/lib/android/sdk  # ← Already there! ✅
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
-      # ─────────────────────────────────
-      # 🔍 STEP 7 - Verify APK Exists
-      # ─────────────────────────────────
       - name: 🔍 Verify APK Generated
         run: |
-          echo "📦 APK file details:"
           ls -lh app/build/outputs/apk/debug/
           echo "✅ APK verified!"
 
-      # ─────────────────────────────────
-      # 📤 STEP 8 - Upload APK Artifact
-      # ─────────────────────────────────
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -90,15 +58,7 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
-      # ─────────────────────────────────
-      # 🎉 STEP 9 - Summary
-      # ─────────────────────────────────
       - name: 🎉 Build Summary
         run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "  🏈 MELVIN PREDICTOR BUILD COMPLETE!"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "  ✅ APK built successfully"
-          echo "  📦 Melvin-Predictor-Debug-APK"
-          echo "  ⬇️  Download from Actions tab!"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🏈 MELVIN PREDICTOR BUILD COMPLETE!"
+          echo "✅ Download APK from Actions tab!"
