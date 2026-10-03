@@ -10,61 +10,32 @@ object ApiClient {
 
     private const val BASE_URL = "https://api.the-odds-api.com/"
 
-    // 🔑 Dynamic key - set at runtime by user!
-    private var currentApiKey: String = ""
+    // 🔑 PUT YOUR API KEY RIGHT HERE!
+    private const val API_KEY  = "a25180dd6ffe4d59871a5e45b0c7fae2"
 
-    // ✅ Called when user saves their key
-    fun setApiKey(apiKey: String) {
-        currentApiKey = apiKey
-        resetClient() // ← Rebuild client with new key!
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(ApiKeyInterceptor(API_KEY))
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
+            .build()
     }
 
-    // 🔄 Reset client when key changes
-    private var _okHttpClient: OkHttpClient? = null
-    private var _retrofit: Retrofit?         = null
-    private var _oddsService: OddsApiService? = null
-
-    private fun resetClient() {
-        _okHttpClient  = null
-        _retrofit      = null
-        _oddsService   = null
+    val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
-    private val okHttpClient: OkHttpClient
-        get() {
-            if (_okHttpClient == null) {
-                _okHttpClient = OkHttpClient.Builder()
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
-                    .addInterceptor(ApiKeyInterceptor(currentApiKey))
-                    .addInterceptor(
-                        HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.HEADERS
-                        }
-                    )
-                    .build()
-            }
-            return _okHttpClient!!
-        }
-
-    private val retrofit: Retrofit
-        get() {
-            if (_retrofit == null) {
-                _retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-            }
-            return _retrofit!!
-        }
-
-    val oddsService: OddsApiService
-        get() {
-            if (_oddsService == null) {
-                _oddsService = retrofit.create(OddsApiService::class.java)
-            }
-            return _oddsService!!
-        }
+    val oddsService: OddsApiService by lazy {
+        retrofit.create(OddsApiService::class.java)
+    }
 }
