@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/background">
+
+    <!-- 🏈 App Logo/Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🏈"
+        android:textSize="64sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Melvin Predictor"
+        android:textColor="@color/accent"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Football Prediction App"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- 📋 Instructions Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:strokeColor="@color/primary_light"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔑 Setup Required"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Enter your free API key from The Odds API to start getting football predictions!"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📌 Free tier includes:"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  ✅ 500 requests/month\n  ✅ Live football odds\n  ✅ Real-time quota tracking"
+                    android:textColor="@color/quota_good"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 🔑 API Key Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilApiKey"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Paste your API key here"
+        app:boxStrokeColor="@color/primary_light"
+        app:hintTextColor="@color/text_secondary"
+        app:helperTextTextColor="@color/quota_good"
+        app:errorTextColor="@color/quota_critical"
+        app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+        app:startIconTint="@color/accent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textVisiblePassword"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:fontFamily="monospace"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ✅ Save Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSaveKey"
+        style="@style/RefreshButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:text="✅ Save Key &amp; Start App"
+        android:textSize="15sp"/>
+
+    <!-- 🗑️ Clear Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnClearKey"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:text="🗑️ Clear Key"
+        android:textColor="@color/text_secondary"
+        app:strokeColor="@color/divider"/>
+
+    <!-- 🔗 Get API Key Link -->
+    <TextView
+        android:id="@+id/tvGetApiKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="👉 Get your FREE API key at the-odds-api.com"
+        android:textColor="@color/accent"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>
