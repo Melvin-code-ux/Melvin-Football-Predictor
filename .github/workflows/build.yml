@@ -1,23 +1,15 @@
 name: 🏈 Melvin Predictor - Build APK
 
-# ─────────────────────────────────────────
-# 🚀 TRIGGERS
-# ─────────────────────────────────────────
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  workflow_dispatch:  # ← Allows manual trigger from GitHub UI!
+  workflow_dispatch:
 
-# ─────────────────────────────────────────
-# ⚙️ JOBS
-# ─────────────────────────────────────────
 jobs:
   build:
     name: ⚡ Build Debug APK
-    runs-on: ubuntu-latest  # ← Fastest free runner!
-    timeout-minutes: 10     # ← Hard stop at 10 min!
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
 
@@ -34,11 +26,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'  # ← Fastest JDK distribution!
-          cache: gradle            # ← Auto caches Gradle! ✅
+          distribution: 'temurin'
+          cache: gradle
 
       # ─────────────────────────────────
-      # 💾 STEP 3 - Cache Gradle Files
+      # 💾 STEP 3 - Cache Gradle
       # ─────────────────────────────────
       - name: 💾 Cache Gradle Dependencies
         uses: actions/cache@v4
@@ -52,20 +44,29 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # ─────────────────────────────────
-      # 🔑 STEP 4 - Setup API Key
+      # 🔧 STEP 4 - Setup Android SDK
       # ─────────────────────────────────
-      - name: 🔑 Inject API Key
+      - name: 🔧 Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # ─────────────────────────────────
+      # 🪄 STEP 5 - Generate Gradle Wrapper
+      # THIS IS THE FIX! ✅
+      # ─────────────────────────────────
+      - name: 🪄 Generate Gradle Wrapper
         run: |
-          echo "ODDS_API_KEY=${{ secrets.ODDS_API_KEY }}" >> local.properties
+          gradle wrapper --gradle-version 8.0 \
+          --distribution-type bin
+        working-directory: ${{ github.workspace }}
 
       # ─────────────────────────────────
-      # 🔧 STEP 5 - Make Gradle Executable
+      # 🔧 STEP 6 - Make Gradlew Executable
       # ─────────────────────────────────
-      - name: 🔧 Grant Gradle Execute Permission
-        run: chmod +x gradlew
+      - name: 🔧 Make Gradlew Executable
+        run: chmod +x ./gradlew
 
       # ─────────────────────────────────
-      # 🏗️ STEP 6 - Build Debug APK
+      # 🏗️ STEP 7 - Build Debug APK
       # ─────────────────────────────────
       - name: 🏗️ Build Debug APK
         run: ./gradlew assembleDebug
@@ -77,27 +78,27 @@ jobs:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
 
       # ─────────────────────────────────
-      # 🔍 STEP 7 - Verify APK Exists
+      # 🔍 STEP 8 - Verify APK Exists
       # ─────────────────────────────────
       - name: 🔍 Verify APK Generated
         run: |
           echo "📦 APK file details:"
           ls -lh app/build/outputs/apk/debug/
-          echo "✅ APK verified successfully!"
+          echo "✅ APK verified!"
 
       # ─────────────────────────────────
-      # 📤 STEP 8 - Upload APK Artifact
+      # 📤 STEP 9 - Upload APK Artifact
       # ─────────────────────────────────
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Melvin-Predictor-Debug-APK
           path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30   # ← APK stays for 30 days!
+          retention-days: 30
           if-no-files-found: error
 
       # ─────────────────────────────────
-      # 🎉 STEP 9 - Build Summary
+      # 🎉 STEP 10 - Summary
       # ─────────────────────────────────
       - name: 🎉 Build Summary
         run: |
@@ -105,7 +106,6 @@ jobs:
           echo "  🏈 MELVIN PREDICTOR BUILD COMPLETE!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "  ✅ APK built successfully"
-          echo "  📦 Artifact: Melvin-Predictor-Debug-APK"
-          echo "  📅 Retention: 30 days"
-          echo "  ⬇️  Download from GitHub Actions tab"
+          echo "  📦 Melvin-Predictor-Debug-APK"
+          echo "  ⬇️  Download from Actions tab!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
