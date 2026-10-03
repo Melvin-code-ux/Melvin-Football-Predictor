@@ -33,14 +33,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # ✅ KEY FIX - Use specific Gradle 8.4
+      # Compatible with AGP 8.1.2!
       - name: 🪄 Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 8.1.1 --distribution-type bin
+        run: |
+          gradle wrapper \
+          --gradle-version 8.4 \
+          --distribution-type bin
 
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
       - name: 🏗️ Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --parallel --build-cache --quiet
+        run: |
+          ./gradlew assembleDebug \
+          --no-daemon \
+          --parallel \
+          --build-cache \
+          --warning-mode none
         env:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
           ANDROID_HOME: /usr/local/lib/android/sdk
