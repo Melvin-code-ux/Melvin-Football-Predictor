@@ -44,29 +44,21 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # ─────────────────────────────────
-      # 🔧 STEP 4 - Setup Android SDK
-      # ─────────────────────────────────
-      - name: 🔧 Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      # ─────────────────────────────────
-      # 🪄 STEP 5 - Generate Gradle Wrapper
-      # THIS IS THE FIX! ✅
+      # 🪄 STEP 4 - Generate Gradle Wrapper
       # ─────────────────────────────────
       - name: 🪄 Generate Gradle Wrapper
-        run: |
-          gradle wrapper --gradle-version 8.0 \
-          --distribution-type bin
-        working-directory: ${{ github.workspace }}
+        run: gradle wrapper --gradle-version 8.0 --distribution-type bin
 
       # ─────────────────────────────────
-      # 🔧 STEP 6 - Make Gradlew Executable
+      # 🔧 STEP 5 - Make Gradlew Executable
       # ─────────────────────────────────
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
       # ─────────────────────────────────
-      # 🏗️ STEP 7 - Build Debug APK
+      # 🏗️ STEP 6 - Build Debug APK
+      # Uses pre-installed Android SDK
+      # on ubuntu-latest ✅ No setup needed!
       # ─────────────────────────────────
       - name: 🏗️ Build Debug APK
         run: ./gradlew assembleDebug
@@ -76,9 +68,10 @@ jobs:
           --quiet
         env:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
+          ANDROID_HOME: /usr/local/lib/android/sdk  # ← Already there! ✅
 
       # ─────────────────────────────────
-      # 🔍 STEP 8 - Verify APK Exists
+      # 🔍 STEP 7 - Verify APK Exists
       # ─────────────────────────────────
       - name: 🔍 Verify APK Generated
         run: |
@@ -87,7 +80,7 @@ jobs:
           echo "✅ APK verified!"
 
       # ─────────────────────────────────
-      # 📤 STEP 9 - Upload APK Artifact
+      # 📤 STEP 8 - Upload APK Artifact
       # ─────────────────────────────────
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -98,7 +91,7 @@ jobs:
           if-no-files-found: error
 
       # ─────────────────────────────────
-      # 🎉 STEP 10 - Summary
+      # 🎉 STEP 9 - Summary
       # ─────────────────────────────────
       - name: 🎉 Build Summary
         run: |
