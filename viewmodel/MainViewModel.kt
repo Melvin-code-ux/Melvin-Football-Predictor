@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.melvin.predictor.model.ApiQuota
 import com.melvin.predictor.model.FootballLeagues
 import com.melvin.predictor.model.Match
-import com.melvin.predictor.model.QuotaStatus
 import com.melvin.predictor.repository.OddsRepository
 import com.melvin.predictor.repository.ResultState
 import com.melvin.predictor.utils.QuotaPreferences
@@ -23,48 +22,30 @@ class MainViewModel(application: Application) :
     private val quotaPrefs = QuotaPreferences(application)
     private val repository = OddsRepository(quotaPrefs)
 
-    private val _matches =
-        MutableLiveData<List<Match>>()
+    private val _matches = MutableLiveData<List<Match>>()
     val matches: LiveData<List<Match>> = _matches
 
-    private val _quota =
-        MutableLiveData<ApiQuota>()
+    private val _quota = MutableLiveData<ApiQuota>()
     val quota: LiveData<ApiQuota> = _quota
 
-    private val _isLoading =
-        MutableLiveData<Boolean>()
+    private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _errorMessage =
-        MutableLiveData<String?>()
+    private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _isQuotaExhausted =
-        MutableLiveData<Boolean>()
-    val isQuotaExhausted: LiveData<Boolean> =
-        _isQuotaExhausted
-
-    private val _lastRefreshed =
-        MutableLiveData<String>()
+    private val _lastRefreshed = MutableLiveData<String>()
     val lastRefreshed: LiveData<String> = _lastRefreshed
 
-    private val _isRefreshEnabled =
-        MutableLiveData(true)
-    val isRefreshEnabled: LiveData<Boolean> =
-        _isRefreshEnabled
+    private val _isRefreshEnabled = MutableLiveData(true)
+    val isRefreshEnabled: LiveData<Boolean> = _isRefreshEnabled
 
-    // ✅ League names for spinner
-    private val _leagueNames =
-        MutableLiveData<List<String>>()
+    private val _leagueNames = MutableLiveData<List<String>>()
     val leagueNames: LiveData<List<String>> = _leagueNames
 
-    // ✅ League keys
-    private val _leagueKeys =
-        MutableLiveData<List<String>>()
+    private val _leagueKeys = MutableLiveData<List<String>>()
 
-    // ✅ Selected league
-    private val _selectedLeague =
-        MutableLiveData("soccer_epl")
+    private val _selectedLeague = MutableLiveData("soccer_epl")
 
     init {
         loadCachedQuota()
@@ -72,23 +53,18 @@ class MainViewModel(application: Application) :
         fetchOdds()
     }
 
-    // ✅ Load all leagues into spinner
     private fun loadLeagues() {
-        _leagueNames.value =
-            FootballLeagues.ALL_LEAGUES.values.toList()
-        _leagueKeys.value =
-            FootballLeagues.ALL_LEAGUES.keys.toList()
+        _leagueNames.value = FootballLeagues.ALL_LEAGUES.values.toList()
+        _leagueKeys.value = FootballLeagues.ALL_LEAGUES.keys.toList()
     }
 
     private fun loadCachedQuota() {
         repository.getCachedQuota()?.let {
             _quota.value = it
-            _isRefreshEnabled.value =
-                it.requestsRemaining > 0
+            _isRefreshEnabled.value = it.requestsRemaining > 0
         }
     }
 
-    // ✅ Called when user selects league
     fun onLeagueSelected(position: Int) {
         val keys = _leagueKeys.value ?: return
         if (position < keys.size) {
@@ -99,17 +75,15 @@ class MainViewModel(application: Application) :
 
     fun fetchOdds() {
         viewModelScope.launch {
-            _isLoading.value    = true
+            _isLoading.value = true
             _errorMessage.value = null
-
             when (val result = repository.getOddsForLeague(
                 _selectedLeague.value ?: "soccer_epl"
             )) {
                 is ResultState.Success -> {
-                    _matches.value          = result.data
-                    _quota.value            = result.quota
-                    _isQuotaExhausted.value = false
-                    _lastRefreshed.value    = getTime()
+                    _matches.value = result.data
+                    _quota.value = result.quota
+                    _lastRefreshed.value = getTime()
                     _isRefreshEnabled.value =
                         result.quota.requestsRemaining > 0
                 }
@@ -117,10 +91,8 @@ class MainViewModel(application: Application) :
                     _errorMessage.value = result.message
                 }
                 is ResultState.QuotaExhausted -> {
-                    _isQuotaExhausted.value = true
                     _isRefreshEnabled.value = false
-                    _errorMessage.value =
-                        "⛔ Quota exhausted!"
+                    _errorMessage.value = "⛔ Quota exhausted!"
                 }
                 else -> Unit
             }
@@ -130,21 +102,16 @@ class MainViewModel(application: Application) :
 
     fun onRefreshClicked() {
         if (_isRefreshEnabled.value == true &&
-            _isLoading.value == false
-        ) {
+            _isLoading.value == false) {
             fetchOdds()
         }
     }
 
-    fun clearError() {
-        _errorMessage.value = null
-    }
+    fun clearError() { _errorMessage.value = null }
 
     private fun getTime(): String =
         "Last updated: ${
-            SimpleDateFormat(
-                "HH:mm:ss",
-                Locale.getDefault()
-            ).format(Date())
+            SimpleDateFormat("HH:mm:ss",
+                Locale.getDefault()).format(Date())
         }"
 }
