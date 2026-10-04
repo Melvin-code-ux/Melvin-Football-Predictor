@@ -26,10 +26,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // ✅ NO KEY CHECK!
-        // ✅ NO API CLIENT SET!
-        // ✅ STRAIGHT TO APP!
         setupRecyclerView()
         setupButtons()
         setupLeagueSpinner()
@@ -63,7 +59,8 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             binding.spinnerLeague.adapter = adapter
-            binding.spinnerLeague.onItemSelectedListener =
+            binding.spinnerLeague
+                .onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -84,12 +81,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+
         viewModel.matches.observe(this) { matches ->
             matchAdapter.submitList(matches)
             binding.tvEmptyState.visibility =
-                if (matches.isEmpty()) View.VISIBLE else View.GONE
+                if (matches.isEmpty()) View.VISIBLE
+                else View.GONE
             binding.rvMatches.visibility =
-                if (matches.isEmpty()) View.GONE else View.VISIBLE
+                if (matches.isEmpty()) View.GONE
+                else View.VISIBLE
         }
 
         viewModel.quota.observe(this) { quota ->
@@ -106,19 +106,21 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.errorMessage.observe(this) { message ->
             message?.let {
-                Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(
-                        ContextCompat.getColor(
-                            this, R.color.quota_critical
-                        )
-                    ).show()
+                Snackbar.make(
+                    binding.root, it, Snackbar.LENGTH_LONG
+                ).setBackgroundTint(
+                    ContextCompat.getColor(
+                        this, R.color.quota_critical
+                    )
+                ).show()
                 viewModel.clearError()
             }
         }
 
         viewModel.isRefreshEnabled.observe(this) { enabled ->
             binding.btnRefresh.isEnabled = enabled
-            binding.btnRefresh.alpha     = if (enabled) 1.0f else 0.5f
+            binding.btnRefresh.alpha =
+                if (enabled) 1.0f else 0.5f
         }
 
         viewModel.lastRefreshed.observe(this) { time ->
@@ -127,10 +129,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuotaUI(quota: ApiQuota) {
-        binding.tvRequestsRemaining.text  = quota.requestsRemaining.toString()
-        binding.tvRequestsUsed.text       = quota.requestsUsed.toString()
-        binding.tvLastCost.text           = quota.lastRequestCost.toString()
-        binding.quotaProgressBar.progress = quota.usagePercent
+        binding.tvRequestsRemaining.text =
+            quota.requestsRemaining.toString()
+        binding.tvRequestsUsed.text =
+            quota.requestsUsed.toString()
+        binding.tvLastCost.text =
+            quota.lastRequestCost.toString()
+        binding.quotaProgressBar.progress =
+            quota.usagePercent
 
         val colorRes = when (quota.statusLevel) {
             QuotaStatus.GOOD      -> R.color.quota_good
