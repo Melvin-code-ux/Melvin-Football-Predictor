@@ -36,7 +36,9 @@ class MainActivity : AppCompatActivity() {
         matchAdapter = MatchAdapter()
         binding.rvMatches.apply {
             adapter = matchAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = LinearLayoutManager(
+                this@MainActivity
+            )
             setHasFixedSize(false)
         }
     }
@@ -59,7 +61,8 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             binding.spinnerLeague.adapter = adapter
-            binding.spinnerLeague.onItemSelectedListener =
+            binding.spinnerLeague
+                .onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -68,7 +71,9 @@ class MainActivity : AppCompatActivity() {
                         id: Long
                     ) {
                         if (isSpinnerReady) {
-                            viewModel.onLeagueSelected(position)
+                            viewModel.onLeagueSelected(
+                                position
+                            )
                         }
                         isSpinnerReady = true
                     }
@@ -80,7 +85,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-
         viewModel.matches.observe(this) { matches ->
             matchAdapter.submitList(matches)
             binding.tvEmptyState.visibility =
@@ -90,11 +94,9 @@ class MainActivity : AppCompatActivity() {
                 if (matches.isEmpty()) View.GONE
                 else View.VISIBLE
         }
-
         viewModel.quota.observe(this) { quota ->
             updateQuotaUI(quota)
         }
-
         viewModel.isLoading.observe(this) { isLoading ->
             binding.loadingLayout.visibility =
                 if (isLoading) View.VISIBLE else View.GONE
@@ -102,7 +104,6 @@ class MainActivity : AppCompatActivity() {
                 if (isLoading) "⏳ Loading..."
                 else "🔄 Refresh Matches"
         }
-
         viewModel.errorMessage.observe(this) { message ->
             message?.let {
                 Snackbar.make(
@@ -118,13 +119,11 @@ class MainActivity : AppCompatActivity() {
                 viewModel.clearError()
             }
         }
-
         viewModel.isRefreshEnabled.observe(this) { enabled ->
             binding.btnRefresh.isEnabled = enabled
             binding.btnRefresh.alpha =
                 if (enabled) 1.0f else 0.5f
         }
-
         viewModel.lastRefreshed.observe(this) { time ->
             binding.tvLastUpdated.text = time
         }
@@ -139,7 +138,6 @@ class MainActivity : AppCompatActivity() {
             quota.lastRequestCost.toString()
         binding.quotaProgressBar.progress =
             quota.usagePercent
-
         val colorRes = when (quota.statusLevel) {
             QuotaStatus.GOOD      -> R.color.quota_good
             QuotaStatus.WARNING   -> R.color.quota_warning
