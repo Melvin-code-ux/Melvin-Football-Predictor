@@ -2,8 +2,6 @@ package com.melvin.predictor.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -20,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private lateinit var matchAdapter: MatchAdapter
-    private var isSpinnerReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupRecyclerView()
         setupButtons()
-        setupLeagueSpinner()
         observeViewModel()
     }
 
@@ -44,37 +40,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupButtons() {
         binding.btnRefresh.setOnClickListener {
             viewModel.onRefreshClicked()
-        }
-    }
-
-    private fun setupLeagueSpinner() {
-        viewModel.leagueNames.observe(this) { names: List<String> ->
-            val spinnerAdapter = ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_spinner_item,
-                names
-            )
-            spinnerAdapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item
-            )
-            binding.spinnerLeague.adapter = spinnerAdapter
-            binding.spinnerLeague.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        if (isSpinnerReady) {
-                            viewModel.onLeagueSelected(position)
-                        }
-                        isSpinnerReady = true
-                    }
-                    override fun onNothingSelected(
-                        parent: AdapterView<*>?
-                    ) {}
-                }
         }
     }
 
