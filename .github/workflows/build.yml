@@ -65,27 +65,35 @@ jobs:
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      # ✅ NOW SHOWS EXACT KOTLIN ERRORS!
+      # ✅ THIS WILL SHOW EXACT ERRORS!
       - name: 🏗️ Build Debug APK
+        id: build
         run: |
           ./gradlew assembleDebug \
           --no-daemon \
-          --warning-mode none \
-          --info 2>&1 | grep -E \
-          "error:|warning:|Error|FAILED|Exception|at com.melvin" \
-          | head -50
+          --continue \
+          2>&1 | tee build_output.txt
+          exit ${PIPESTATUS[0]}
         env:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
           ANDROID_HOME: /usr/local/lib/android/sdk
 
-      - name: 🏗️ Build Debug APK Final
+      # ✅ PRINT EXACT KOTLIN ERRORS!
+      - name: 🔍 Show Exact Errors
+        if: failure()
         run: |
-          ./gradlew assembleDebug \
-          --no-daemon \
-          --warning-mode none
-        env:
-          GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
-          ANDROID_HOME: /usr/local/lib/android/sdk
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "❌ KOTLIN ERRORS:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          grep -i "error:" build_output.txt || true
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "❌ UNRESOLVED REFERENCES:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          grep -i "unresolved" build_output.txt || true
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "❌ FULL ERROR CONTEXT:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          grep -A 3 "error:" build_output.txt || true
 
       - name: 🔍 Verify APK
         run: |
