@@ -11,7 +11,7 @@
         android:theme="@style/Theme.MelvinPredictor"
         android:usesCleartextTraffic="false">
 
-        <!-- ✅ MAINACTIVITY IS LAUNCHER! -->
+        <!-- ✅ ONLY MAINACTIVITY! NO APIKEYACTIVITY! -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -21,12 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <!-- NOT LAUNCHER ANYMORE! -->
-        <activity
-            android:name=".ui.ApiKeyActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
 
     </application>
 
