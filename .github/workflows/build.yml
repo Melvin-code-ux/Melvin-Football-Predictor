@@ -65,40 +65,39 @@ jobs:
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      # ✅ Show ALL files in repo
-      - name: 📁 Show All Project Files
+      # ✅ Show ALL kotlin files
+      - name: 📁 List All Kotlin Files
         run: |
-          echo "━━━━━━ PROJECT FILES ━━━━━━"
+          echo "━━━━ KOTLIN FILES ━━━━"
           find app/src -name "*.kt" | sort
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "━━━━━━━━━━━━━━━━━━━━━━"
 
-      # ✅ Build and capture EVERYTHING
+      # ✅ NO || true THIS TIME!
+      # Will show REAL errors!
       - name: 🏗️ Build Debug APK
         run: |
           ./gradlew assembleDebug \
           --no-daemon \
           --stacktrace \
-          --info \
-          2>&1 | tee build_log.txt || true
+          2>&1 | tee build_log.txt
+        env:
+          GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
-      # ✅ Show ONLY errors
-      - name: ❌ Show Kotlin Errors
-        if: always()
+      - name: 🔍 Verify APK
         run: |
-          echo "━━━━━━ KOTLIN ERRORS ━━━━━━"
-          grep -n "error:" build_log.txt || echo "No errors found"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "━━━━━━ UNRESOLVED ━━━━━━"
-          grep -n "Unresolved\|unresolved" build_log.txt || echo "None"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "━━━━━━ NOT FOUND ━━━━━━"
-          grep -n "not found\|Not found" build_log.txt || echo "None"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "━━━━━━ EXCEPTION ━━━━━━"
-          grep -n "Exception\|exception" build_log.txt | head -20 || echo "None"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          ls -lh app/build/outputs/apk/debug/
+          echo "✅ APK Ready!"
 
-      # ✅ Upload log as artifact too!
+      - name: 📤 Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Melvin-Predictor-Debug-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      # ✅ Always upload log
       - name: 📤 Upload Build Log
         if: always()
         uses: actions/upload-artifact@v4
@@ -107,11 +106,5 @@ jobs:
           path: build_log.txt
           retention-days: 1
 
-      - name: 📤 Upload APK If Exists
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Melvin-Predictor-Debug-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-          if-no-files-found: warn
+      - name: 🎉 Done!
+        run: echo "🏈 APK READY TO DOWNLOAD!"
