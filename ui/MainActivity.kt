@@ -13,25 +13,23 @@ import com.melvin.predictor.R
 import com.melvin.predictor.databinding.ActivityMainBinding
 import com.melvin.predictor.model.ApiQuota
 import com.melvin.predictor.model.QuotaStatus
-import com.melvin.predictor.utils.QuotaPreferences
 import com.melvin.predictor.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var quotaPrefs: QuotaPreferences
     private val viewModel: MainViewModel by viewModels()
     private lateinit var matchAdapter: MatchAdapter
     private var isSpinnerReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding    = ActivityMainBinding.inflate(layoutInflater)
-        quotaPrefs = QuotaPreferences(this)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ✅ No key check needed!
-        // Key is hardcoded in ApiClient!
+        // ✅ NO KEY CHECK!
+        // ✅ NO API CLIENT SET!
+        // ✅ STRAIGHT TO APP!
         setupRecyclerView()
         setupButtons()
         setupLeagueSpinner()
@@ -64,9 +62,7 @@ class MainActivity : AppCompatActivity() {
                     android.R.layout.simple_spinner_dropdown_item
                 )
             }
-
             binding.spinnerLeague.adapter = adapter
-
             binding.spinnerLeague.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
@@ -112,7 +108,9 @@ class MainActivity : AppCompatActivity() {
             message?.let {
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG)
                     .setBackgroundTint(
-                        ContextCompat.getColor(this, R.color.quota_critical)
+                        ContextCompat.getColor(
+                            this, R.color.quota_critical
+                        )
                     ).show()
                 viewModel.clearError()
             }
@@ -140,7 +138,6 @@ class MainActivity : AppCompatActivity() {
             QuotaStatus.CRITICAL  -> R.color.quota_critical
             QuotaStatus.EXHAUSTED -> R.color.quota_exhausted
         }
-
         val color = ContextCompat.getColor(this, colorRes)
         binding.tvRequestsRemaining.setTextColor(color)
         binding.quotaProgressBar.progressTintList =
