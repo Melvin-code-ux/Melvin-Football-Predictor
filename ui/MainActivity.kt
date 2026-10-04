@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-
         viewModel.matches.observe(this) { matches ->
             matchAdapter.submitList(matches)
             binding.tvEmptyState.visibility =
@@ -107,10 +106,13 @@ class MainActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) { message ->
             message?.let {
                 Snackbar.make(
-                    binding.root, it, Snackbar.LENGTH_LONG
+                    binding.root,
+                    it,
+                    Snackbar.LENGTH_LONG
                 ).setBackgroundTint(
                     ContextCompat.getColor(
-                        this, R.color.quota_critical
+                        this,
+                        R.color.quota_critical
                     )
                 ).show()
                 viewModel.clearError()
