@@ -65,35 +65,20 @@ jobs:
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      # ✅ THIS WILL SHOW EXACT ERRORS!
+      # ✅ CAPTURES EVERYTHING!
       - name: 🏗️ Build Debug APK
-        id: build
         run: |
           ./gradlew assembleDebug \
           --no-daemon \
-          --continue \
-          2>&1 | tee build_output.txt
-          exit ${PIPESTATUS[0]}
-        env:
-          GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
-          ANDROID_HOME: /usr/local/lib/android/sdk
+          --stacktrace \
+          2>&1 | tee build_log.txt || true
 
-      # ✅ PRINT EXACT KOTLIN ERRORS!
-      - name: 🔍 Show Exact Errors
-        if: failure()
+      - name: 📄 Print Full Build Log
+        if: always()
         run: |
+          echo "━━━━━━ FULL BUILD LOG ━━━━━━"
+          cat build_log.txt
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "❌ KOTLIN ERRORS:"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          grep -i "error:" build_output.txt || true
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "❌ UNRESOLVED REFERENCES:"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          grep -i "unresolved" build_output.txt || true
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "❌ FULL ERROR CONTEXT:"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          grep -A 3 "error:" build_output.txt || true
 
       - name: 🔍 Verify APK
         run: |
