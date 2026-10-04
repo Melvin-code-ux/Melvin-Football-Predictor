@@ -10,32 +10,38 @@ object ApiClient {
 
     private const val BASE_URL = "https://api.the-odds-api.com/"
 
-    // 🔑 PUT YOUR API KEY RIGHT HERE!
+    // 🔑 YOUR KEY HERE!
     private const val API_KEY  = "a25180dd6ffe4d59871a5e45b0c7fae2"
 
-    private val okHttpClient: OkHttpClient by lazy {
-        OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(ApiKeyInterceptor(API_KEY))
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-            )
-            .build()
-    }
-
-    val retrofit: Retrofit by lazy {
+    val oddsService: OddsApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(okHttpClient)
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .addInterceptor { chain ->
+                        val url = chain.request().url
+                            .newBuilder()
+                            .addQueryParameter("apiKey", API_KEY)
+                            .build()
+                        chain.proceed(
+                            chain.request()
+                                .newBuilder()
+                                .url(url)
+                                .build()
+                        )
+                    }
+                    .addInterceptor(
+                        HttpLoggingInterceptor().apply {
+                            level = HttpLoggingInterceptor.Level.BODY
+                        }
+                    )
+                    .build()
+            )
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
-
-    val oddsService: OddsApiService by lazy {
-        retrofit.create(OddsApiService::class.java)
+            .create(OddsApiService::class.java)
     }
 }
