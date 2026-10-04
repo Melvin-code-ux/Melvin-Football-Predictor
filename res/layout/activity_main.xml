@@ -11,41 +11,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/primary_dark"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏈 Melvin Predictor"
-                android:textColor="@color/accent"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/tvLastUpdated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Last updated: --:--:--"
-                android:textColor="@color/text_secondary"
-                android:textSize="11sp"/>
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChangeKey"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔑 Key"
+            android:text="🏈 Melvin Predictor"
             android:textColor="@color/accent"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvLastUpdated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last updated: --:--:--"
+            android:textColor="@color/text_secondary"
             android:textSize="11sp"/>
     </LinearLayout>
 
