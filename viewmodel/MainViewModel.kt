@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.melvin.predictor.model.ApiQuota
-import com.melvin.predictor.model.FootballLeagues
 import com.melvin.predictor.model.Match
 import com.melvin.predictor.repository.OddsRepository
 import com.melvin.predictor.repository.ResultState
@@ -40,22 +39,9 @@ class MainViewModel(application: Application) :
     private val _isRefreshEnabled = MutableLiveData(true)
     val isRefreshEnabled: LiveData<Boolean> = _isRefreshEnabled
 
-    private val _leagueNames = MutableLiveData<List<String>>()
-    val leagueNames: LiveData<List<String>> = _leagueNames
-
-    private val _leagueKeys = MutableLiveData<List<String>>()
-
-    private val _selectedLeague = MutableLiveData("soccer_epl")
-
     init {
         loadCachedQuota()
-        loadLeagues()
         fetchOdds()
-    }
-
-    private fun loadLeagues() {
-        _leagueNames.value = FootballLeagues.ALL_LEAGUES.values.toList()
-        _leagueKeys.value = FootballLeagues.ALL_LEAGUES.keys.toList()
     }
 
     private fun loadCachedQuota() {
@@ -65,20 +51,12 @@ class MainViewModel(application: Application) :
         }
     }
 
-    fun onLeagueSelected(position: Int) {
-        val keys = _leagueKeys.value ?: return
-        if (position < keys.size) {
-            _selectedLeague.value = keys[position]
-            fetchOdds()
-        }
-    }
-
     fun fetchOdds() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
             when (val result = repository.getOddsForLeague(
-                _selectedLeague.value ?: "soccer_epl"
+                "soccer_epl"
             )) {
                 is ResultState.Success -> {
                     _matches.value = result.data
