@@ -36,9 +36,7 @@ class MainActivity : AppCompatActivity() {
         matchAdapter = MatchAdapter()
         binding.rvMatches.apply {
             adapter = matchAdapter
-            layoutManager = LinearLayoutManager(
-                this@MainActivity
-            )
+            layoutManager = LinearLayoutManager(this@MainActivity)
             setHasFixedSize(false)
         }
     }
@@ -50,19 +48,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupLeagueSpinner() {
-        viewModel.leagueNames.observe(this) { names ->
-            val adapter = ArrayAdapter(
+        viewModel.leagueNames.observe(this) { names: List<String> ->
+            val spinnerAdapter = ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 names
-            ).apply {
-                setDropDownViewResource(
-                    android.R.layout.simple_spinner_dropdown_item
-                )
-            }
-            binding.spinnerLeague.adapter = adapter
-            binding.spinnerLeague
-                .onItemSelectedListener =
+            )
+            spinnerAdapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item
+            )
+            binding.spinnerLeague.adapter = spinnerAdapter
+            binding.spinnerLeague.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -71,9 +67,7 @@ class MainActivity : AppCompatActivity() {
                         id: Long
                     ) {
                         if (isSpinnerReady) {
-                            viewModel.onLeagueSelected(
-                                position
-                            )
+                            viewModel.onLeagueSelected(position)
                         }
                         isSpinnerReady = true
                     }
@@ -107,13 +101,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) { message ->
             message?.let {
                 Snackbar.make(
-                    binding.root,
-                    it,
-                    Snackbar.LENGTH_LONG
+                    binding.root, it, Snackbar.LENGTH_LONG
                 ).setBackgroundTint(
                     ContextCompat.getColor(
-                        this,
-                        R.color.quota_critical
+                        this, R.color.quota_critical
                     )
                 ).show()
                 viewModel.clearError()
