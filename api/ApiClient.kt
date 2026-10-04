@@ -11,7 +11,7 @@ object ApiClient {
     private const val BASE_URL = "https://api.the-odds-api.com/"
 
     // 🔑 YOUR KEY HERE!
-    private const val API_KEY  = "a25180dd6ffe4d59871a5e45b0c7fae2"
+    private const val API_KEY = "a25180dd6ffe4d59871a5e45b0c7fae2"
 
     val oddsService: OddsApiService by lazy {
         Retrofit.Builder()
@@ -22,7 +22,8 @@ object ApiClient {
                     .readTimeout(15, TimeUnit.SECONDS)
                     .writeTimeout(15, TimeUnit.SECONDS)
                     .addInterceptor { chain ->
-                        val url = chain.request().url
+                        val url = chain.request()
+                            .url
                             .newBuilder()
                             .addQueryParameter("apiKey", API_KEY)
                             .build()
