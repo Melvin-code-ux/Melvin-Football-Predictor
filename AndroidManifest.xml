@@ -11,7 +11,7 @@
         android:theme="@style/Theme.MelvinPredictor"
         android:usesCleartextTraffic="false">
 
-        <!-- ✅ MainActivity is now the LAUNCHER! -->
+        <!-- ✅ MAINACTIVITY IS LAUNCHER! -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <!-- ApiKeyActivity kept but not launcher -->
+        <!-- NOT LAUNCHER ANYMORE! -->
         <activity
             android:name=".ui.ApiKeyActivity"
             android:exported="false"
