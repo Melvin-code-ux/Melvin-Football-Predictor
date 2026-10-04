@@ -19,12 +19,10 @@ import java.util.Locale
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
+    // ✅ No QuotaPreferences needed for key!
     private val quotaPrefs = QuotaPreferences(application)
     private val repository = OddsRepository(quotaPrefs)
 
-    // ─────────────────────────────────────
-    // LiveData
-    // ─────────────────────────────────────
     private val _matches             = MutableLiveData<List<Match>>()
     val matches: LiveData<List<Match>> = _matches
 
@@ -55,20 +53,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _leagueKeys          = MutableLiveData<List<String>>()
     val leagueKeys: LiveData<List<String>> = _leagueKeys
 
-    // ─────────────────────────────────────
-    // Init
-    // ─────────────────────────────────────
     init {
         loadCachedQuota()
         loadLeagues()
         fetchOdds()
     }
 
-    // 🌍 Load all leagues
     private fun loadLeagues() {
-        val leagues = FootballLeagues.ALL_LEAGUES
-        _leagueNames.value = leagues.values.toList()
-        _leagueKeys.value  = leagues.keys.toList()
+        _leagueNames.value = FootballLeagues.ALL_LEAGUES.values.toList()
+        _leagueKeys.value  = FootballLeagues.ALL_LEAGUES.keys.toList()
     }
 
     private fun loadCachedQuota() {
@@ -78,7 +71,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // 🏆 User selects league
     fun onLeagueSelected(position: Int) {
         val keys = _leagueKeys.value ?: return
         if (position < keys.size) {
@@ -87,21 +79,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ⚽ Fetch odds for selected league
     fun fetchOdds() {
         viewModelScope.launch {
             _isLoading.value    = true
             _errorMessage.value = null
 
-            val sport = _selectedLeague.value ?: "soccer_epl"
-
-            when (val result = repository.getOddsForLeague(sport)) {
+            when (val result = repository.getOddsForLeague(
+                _selectedLeague.value ?: "soccer_epl"
+            )) {
                 is ResultState.Success -> {
                     _matches.value          = result.data
                     _quota.value            = result.quota
                     _isQuotaExhausted.value = false
-                    _lastRefreshed.value    = getCurrentTime()
-                    _isRefreshEnabled.value = result.quota.requestsRemaining > 0
+                    _lastRefreshed.value    = getTime()
+                    _isRefreshEnabled.value =
+                        result.quota.requestsRemaining > 0
                 }
                 is ResultState.Error -> {
                     _errorMessage.value = result.message
@@ -118,21 +110,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onRefreshClicked() {
-        if (_isRefreshEnabled.value == true && _isLoading.value == false) {
+        if (_isRefreshEnabled.value == true &&
+            _isLoading.value == false) {
             fetchOdds()
         }
     }
 
     fun clearError() { _errorMessage.value = null }
 
-    fun getQuotaColorRes(): Int = when (_quota.value?.statusLevel) {
-        QuotaStatus.GOOD      -> android.R.color.holo_green_light
-        QuotaStatus.WARNING   -> android.R.color.holo_orange_light
-        QuotaStatus.CRITICAL  -> android.R.color.holo_red_light
-        QuotaStatus.EXHAUSTED -> android.R.color.holo_red_dark
-        null                  -> android.R.color.holo_green_light
-    }
-
-    private fun getCurrentTime(): String =
-        "Last updated: ${SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())}"
+    private fun getTime(): String =
+        "Last updated: ${
+            SimpleDateFormat(
+                "HH:mm:ss",
+                Locale.getDefault()
+            ).format(Date())
+        }"
 }
