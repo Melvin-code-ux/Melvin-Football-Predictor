@@ -17,41 +17,51 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) :
+    AndroidViewModel(application) {
 
-    // ✅ No QuotaPreferences needed for key!
     private val quotaPrefs = QuotaPreferences(application)
     private val repository = OddsRepository(quotaPrefs)
 
-    private val _matches             = MutableLiveData<List<Match>>()
+    private val _matches =
+        MutableLiveData<List<Match>>()
     val matches: LiveData<List<Match>> = _matches
 
-    private val _quota               = MutableLiveData<ApiQuota>()
-    val quota: LiveData<ApiQuota>    = _quota
+    private val _quota =
+        MutableLiveData<ApiQuota>()
+    val quota: LiveData<ApiQuota> = _quota
 
-    private val _isLoading           = MutableLiveData<Boolean>()
+    private val _isLoading =
+        MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _errorMessage        = MutableLiveData<String?>()
+    private val _errorMessage =
+        MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _isQuotaExhausted    = MutableLiveData<Boolean>()
-    val isQuotaExhausted: LiveData<Boolean> = _isQuotaExhausted
+    private val _isQuotaExhausted =
+        MutableLiveData<Boolean>()
+    val isQuotaExhausted: LiveData<Boolean> =
+        _isQuotaExhausted
 
-    private val _lastRefreshed       = MutableLiveData<String>()
+    private val _lastRefreshed =
+        MutableLiveData<String>()
     val lastRefreshed: LiveData<String> = _lastRefreshed
 
-    private val _isRefreshEnabled    = MutableLiveData(true)
-    val isRefreshEnabled: LiveData<Boolean> = _isRefreshEnabled
+    private val _isRefreshEnabled =
+        MutableLiveData(true)
+    val isRefreshEnabled: LiveData<Boolean> =
+        _isRefreshEnabled
 
-    private val _selectedLeague      = MutableLiveData("soccer_epl")
-    val selectedLeague: LiveData<String> = _selectedLeague
+    private val _selectedLeague =
+        MutableLiveData("soccer_epl")
 
-    private val _leagueNames         = MutableLiveData<List<String>>()
+    private val _leagueNames =
+        MutableLiveData<List<String>>()
     val leagueNames: LiveData<List<String>> = _leagueNames
 
-    private val _leagueKeys          = MutableLiveData<List<String>>()
-    val leagueKeys: LiveData<List<String>> = _leagueKeys
+    private val _leagueKeys =
+        MutableLiveData<List<String>>()
 
     init {
         loadCachedQuota()
@@ -60,14 +70,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun loadLeagues() {
-        _leagueNames.value = FootballLeagues.ALL_LEAGUES.values.toList()
-        _leagueKeys.value  = FootballLeagues.ALL_LEAGUES.keys.toList()
+        _leagueNames.value =
+            FootballLeagues.ALL_LEAGUES.values.toList()
+        _leagueKeys.value =
+            FootballLeagues.ALL_LEAGUES.keys.toList()
     }
 
     private fun loadCachedQuota() {
         repository.getCachedQuota()?.let {
-            _quota.value            = it
-            _isRefreshEnabled.value = it.requestsRemaining > 0
+            _quota.value = it
+            _isRefreshEnabled.value =
+                it.requestsRemaining > 0
         }
     }
 
@@ -116,7 +129,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun clearError() { _errorMessage.value = null }
+    fun clearError() {
+        _errorMessage.value = null
+    }
 
     private fun getTime(): String =
         "Last updated: ${
