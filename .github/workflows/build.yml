@@ -65,29 +65,14 @@ jobs:
       - name: 🔧 Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      # ✅ Show ALL kotlin files
-      - name: 📁 List All Kotlin Files
-        run: |
-          echo "━━━━ KOTLIN FILES ━━━━"
-          find app/src -name "*.kt" | sort
-          echo "━━━━━━━━━━━━━━━━━━━━━━"
-
-      # ✅ NO || true THIS TIME!
-      # Will show REAL errors!
       - name: 🏗️ Build Debug APK
         run: |
           ./gradlew assembleDebug \
           --no-daemon \
-          --stacktrace \
-          2>&1 | tee build_log.txt
+          --stacktrace
         env:
           GRADLE_OPTS: "-Xmx2g -XX:+UseParallelGC"
           ANDROID_HOME: /usr/local/lib/android/sdk
-
-      - name: 🔍 Verify APK
-        run: |
-          ls -lh app/build/outputs/apk/debug/
-          echo "✅ APK Ready!"
 
       - name: 📤 Upload APK
         uses: actions/upload-artifact@v4
@@ -96,15 +81,6 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
           if-no-files-found: error
-
-      # ✅ Always upload log
-      - name: 📤 Upload Build Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Build-Log
-          path: build_log.txt
-          retention-days: 1
 
       - name: 🎉 Done!
         run: echo "🏈 APK READY TO DOWNLOAD!"
