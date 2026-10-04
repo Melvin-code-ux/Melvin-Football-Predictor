@@ -53,15 +53,18 @@ class MainViewModel(application: Application) :
     val isRefreshEnabled: LiveData<Boolean> =
         _isRefreshEnabled
 
-    private val _selectedLeague =
-        MutableLiveData("soccer_epl")
-
+    // ✅ League names for spinner
     private val _leagueNames =
         MutableLiveData<List<String>>()
     val leagueNames: LiveData<List<String>> = _leagueNames
 
+    // ✅ League keys
     private val _leagueKeys =
         MutableLiveData<List<String>>()
+
+    // ✅ Selected league
+    private val _selectedLeague =
+        MutableLiveData("soccer_epl")
 
     init {
         loadCachedQuota()
@@ -69,6 +72,7 @@ class MainViewModel(application: Application) :
         fetchOdds()
     }
 
+    // ✅ Load all leagues into spinner
     private fun loadLeagues() {
         _leagueNames.value =
             FootballLeagues.ALL_LEAGUES.values.toList()
@@ -84,6 +88,7 @@ class MainViewModel(application: Application) :
         }
     }
 
+    // ✅ Called when user selects league
     fun onLeagueSelected(position: Int) {
         val keys = _leagueKeys.value ?: return
         if (position < keys.size) {
@@ -114,7 +119,8 @@ class MainViewModel(application: Application) :
                 is ResultState.QuotaExhausted -> {
                     _isQuotaExhausted.value = true
                     _isRefreshEnabled.value = false
-                    _errorMessage.value     = "⛔ Quota exhausted!"
+                    _errorMessage.value =
+                        "⛔ Quota exhausted!"
                 }
                 else -> Unit
             }
@@ -124,7 +130,8 @@ class MainViewModel(application: Application) :
 
     fun onRefreshClicked() {
         if (_isRefreshEnabled.value == true &&
-            _isLoading.value == false) {
+            _isLoading.value == false
+        ) {
             fetchOdds()
         }
     }
