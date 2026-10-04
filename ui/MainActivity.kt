@@ -15,6 +15,10 @@ import com.melvin.predictor.model.ApiQuota
 import com.melvin.predictor.model.QuotaStatus
 import com.melvin.predictor.viewmodel.MainViewModel
 
+// ✅ NO ApiKeyActivity import!
+// ✅ NO QuotaPreferences import!
+// ✅ NO ApiClient import!
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -26,6 +30,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // ✅ NO KEY CHECK!
+        // ✅ STRAIGHT TO APP!
         setupRecyclerView()
         setupButtons()
         setupLeagueSpinner()
